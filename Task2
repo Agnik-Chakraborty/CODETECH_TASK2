@@ -1,0 +1,95 @@
+from datetime import datetime, timedelta
+
+class LibraryItem:
+    def __init__(self, title, author, category):
+        self.title = title
+        self.author = author
+        self.category = category
+        self.is_checked_out = False
+        self.due_date = None
+
+    def check_out(self, duration_days=14):
+        if self.is_checked_out:
+            print(f'Item "{self.title}" is already checked out.')
+            return
+        self.is_checked_out = True
+        self.due_date = datetime.now() + timedelta(days=duration_days)
+        print(f'Item "{self.title}" checked out for {duration_days} days. Due on {self.due_date.strftime("%Y-%m-%d")}.')
+
+    def return_item(self):
+        if not self.is_checked_out:
+            print(f'Item "{self.title}" is not checked out.')
+            return
+        self.is_checked_out = False
+        self.due_date = None
+        print(f'Item "{self.title}" returned.')
+
+    def is_overdue(self):
+        if self.is_checked_out and datetime.now() > self.due_date:
+            return True
+        return False
+
+class Library:
+    def __init__(self):
+        self.items = []
+
+    def add_item(self, item):
+        self.items.append(item)
+        print(f'Item "{item.title}" added to the library.')
+
+    def check_out_item(self, title):
+        item = self.find_item_by_title(title)
+        if item:
+            item.check_out()
+
+    def return_item(self, title):
+        item = self.find_item_by_title(title)
+        if item:
+            item.return_item()
+
+    def calculate_fine(self, title, fine_per_day=1.0):
+        item = self.find_item_by_title(title)
+        if item and item.is_overdue():
+            overdue_days = (datetime.now() - item.due_date).days
+            fine = overdue_days * fine_per_day
+            return fine
+        return 0.0
+
+    def search_items(self, query, search_by='title'):
+        results = []
+        for item in self.items:
+            if search_by == 'title' and query.lower() in item.title.lower():
+                results.append(item)
+            elif search_by == 'author' and query.lower() in item.author.lower():
+                results.append(item)
+            elif search_by == 'category' and query.lower() in item.category.lower():
+                results.append(item)
+        return results
+
+    def find_item_by_title(self, title):
+        for item in self.items:
+            if item.title.lower() == title.lower():
+                return item
+        print(f'Item "{title}" not found in the library.')
+        return None
+
+# Usage example
+library = Library()
+
+book1 = LibraryItem("The Great Gatsby", "F. Scott Fitzgerald", "Book")
+magazine1 = LibraryItem("National Geographic", "Various Authors", "Magazine")
+dvd1 = LibraryItem("Inception", "Christopher Nolan", "DVD")
+
+library.add_item(book1)
+library.add_item(magazine1)
+library.add_item(dvd1)
+
+library.check_out_item("The Great Gatsby")
+library.check_out_item("Inception")
+
+print(f'Fine for "The Great Gatsby": ${library.calculate_fine("The Great Gatsby"):.2f}')
+
+results = library.search_items("inception")
+print(f'Search results: {[item.title for item in results]}')
+
+library.return_item("The Great Gatsby")
