@@ -1,5 +1,10 @@
-from datetime import datetime, timedelta
+/*Developing a Python program to manage library resources such as books,
+magazines, and DVDs. The system support functionalities like
+adding new items to the library, checking out and returning items,
+managing overdue fines, and searching for items by title, author, or
+category*/
 
+from datetime import datetime, timedelta
 class LibraryItem:
     def __init__(self, title, author, category):
         self.title = title
@@ -86,7 +91,6 @@ library.add_item(dvd1)
 
 library.check_out_item("The Great Gatsby")
 library.check_out_item("Inception")
-
 print(f'Fine for "The Great Gatsby": ${library.calculate_fine("The Great Gatsby"):.2f}')
 
 results = library.search_items("inception")
